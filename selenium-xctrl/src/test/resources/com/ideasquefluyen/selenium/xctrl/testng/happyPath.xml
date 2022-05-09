@@ -1,0 +1,38 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Xctrl Test Hybrid Suit" verbose="10" preserve-order="true" thread-count="1">
+
+
+    <!--  -->
+    <!-- Happy path No escalations-->
+    <!--  -->
+	<test name="Happy path No escalations" preserve-order="true" enabled="true">
+
+        <!-- app parameters -->
+        <parameter name="snapshotOnFail"   value="true"></parameter>
+        <parameter name="connectionString" value="jdbc:sqlserver://xctrl.db.dev.ideasquefluyen.com;user=xctrlusr001;password=xctrlsr1q2w3e4r;databaseName=DEV_Vault"></parameter>
+
+		<parameter name="env"       value="uat"></parameter>
+		<parameter name="url"       value="192.168.127.246:8082"></parameter>
+		<parameter name="username"  value="XCtrl05"></parameter>
+        <parameter name="password"  value="asdf"></parameter>
+        <parameter name="zipcode"   value="66062"></parameter>
+        <parameter name="firstname" value="TRACEY"></parameter>
+        <parameter name="lastname"  value="EARL"></parameter>
+        <parameter name="birthDate" value="04271961"></parameter>
+        <parameter name="ssn"       value="4755"></parameter>
+        <parameter name="address"   value="1559961 TEST"></parameter>
+        <parameter name="phone"     value="5555555555"></parameter>
+
+        <classes>
+			<class name="com.ideasquefluyen.selenium.xctrl.HappyPath" >
+                <methods>
+                    <include name="selectLocalEnvironment"/>
+                    <include name="login"/>
+                    <include name="fillForm"/>
+                </methods>
+            </class>
+		</classes>
+	</test>
+
+</suite>

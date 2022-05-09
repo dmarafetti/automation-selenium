@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.ideasquefluyen.selenium</groupId>
+        <artifactId>parent-pom</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>com.ideasquefluyen.selenium</groupId>
+    <artifactId>xctrl</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>Selenium xctrl Script</name>
+    <description>Automation project for xctrl Application</description>
+
+     <properties>
+
+        <!--  -->
+        <!-- POM specific properties -->
+        <!--  -->
+        <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <org.seleniumhq.version>2.53.0</org.seleniumhq.version>
+        <org.testng.version>6.9.10</org.testng.version>
+        <maven.test.skip>false</maven.test.skip>
+        <selenium.suiteFile>happyPath.xml</selenium.suiteFile>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>4.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.99soft.guice</groupId>
+            <artifactId>rocoto</artifactId>
+            <version>6.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-invoker</artifactId>
+            <version>2.2</version>
+        </dependency>
+
+
+        <!--
+            Selenium
+         -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${org.seleniumhq.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-server</artifactId>
+            <version>${org.seleniumhq.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.appium</groupId>
+            <artifactId>java-client</artifactId>
+            <version>3.4.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>sqljdbc4</artifactId>
+            <version>4.0</version>
+            <scope>system</scope>
+            <type>jar</type>
+            <systemPath>${basedir}/src/etc/sqljdbc4.jar</systemPath>
+        </dependency>
+
+
+        <!--
+            Unit testing
+        -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${org.testng.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+    </dependencies>
+
+
+    <build>
+
+        <finalName>${project.artifactId}-${project.version}</finalName>
+
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <testResources>
+            <testResource>
+                <directory>${basedir}/src/test/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.txt</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.properties</include>
+                    <include>**/*.apk</include>
+                </includes>
+            </testResource>
+        </testResources>
+
+        <plugins>
+
+            <!--  -->
+            <!-- Configure surefire: Run TestNG Suite XML -->
+            <!--  -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <configuration>
+
+                    <!--  -->
+                    <!-- Global variables available on testing time -->
+                    <!-- Selenium default properties -->
+                    <!--  -->
+                    <systemPropertyVariables>
+                        <java.util.logging.config.file>${basedir}/src/test/resources/com/ideasquefluyen/selenium/xctrl/logging/logging.properties</java.util.logging.config.file>
+                        <selenium.browser>firefox</selenium.browser>
+                        <selenium.gridUrl>http://localhost:4444/wd/hub</selenium.gridUrl>
+                        <selenium.threadsPool>1</selenium.threadsPool>
+                        <selenium.proofsDir>${project.build.directory}/proofs</selenium.proofsDir>
+                        <selenium.config>${basedir}/src/test/resources/com/ideasquefluyen/selenium/xctrl/selenium/configuration.xml</selenium.config>
+                    </systemPropertyVariables>
+
+                    <!--  -->
+                    <!-- Run tests from suite xml -->
+                    <!--  -->
+                    <suiteXmlFiles>
+                        <suiteXmlFile>${basedir}/src/test/resources/com/ideasquefluyen/selenium/xctrl/testng/${selenium.suiteFile}</suiteXmlFile>
+                    </suiteXmlFiles>
+
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <configuration>
+                    <mainClass>com.ideasquefluyen.selenium.xctrl.testng.appium.AppiumLauncher</mainClass>
+                    <includeProjectDependencies>true</includeProjectDependencies>
+                    <arguments>
+                        <argument>--profile</argument>
+                        <argument>${basedir}/src/test/resources/com/ideasquefluyen/selenium/xctrl/appium/test.properties</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+
+
+        </plugins>
+
+    </build>
+
+
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <inherited>true</inherited>
+                <reportSets>
+                   <reportSet>
+                       <reports>
+                           <report>dependency-info</report>
+                           <report>index</report>
+                           <report>plugin-management</report>
+                           <report>plugins</report>
+                           <report>summary</report>
+                       </reports>
+                   </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
+
+
+    <profiles>
+
+        <!--  -->
+        <!-- Selenium default properties -->
+        <!--  -->
+        <profile>
+            <id>default-properties</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+            </properties>
+        </profile>
+
+
+        <!--  -->
+        <!-- Change output directory -->
+        <!--  -->
+        <profile>
+            <id>otherOutputDir</id>
+            <build>
+                <directory>${project.basedir}/${buildDirectory}</directory>
+            </build>
+        </profile>
+
+
+        <!--  -->
+        <!-- Wake up device -->
+        <!--  -->
+        <profile>
+            <id>android-wakeup-device</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.5.0</version>
+                        <executions>
+                            <execution>
+                                <id>android-wake-up</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>adb</executable>
+                                    <commandlineArgs>-P 5037 -s ${selenium.hybridDeviceName} shell am start io.appium.unlock/.Unlock</commandlineArgs>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+
+        <!--  -->
+        <!-- Kill previous Appium instances -->
+        <!--  -->
+        <profile>
+            <id>kill-appium-instances</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.5.0</version>
+                        <executions>
+
+                             <!-- start previous instances -->
+                             <execution>
+                                 <id>appium-kill</id>
+                                 <phase>process-test-resources</phase>
+                                 <goals>
+                                     <goal>exec</goal>
+                                 </goals>
+                                <configuration>
+                                    <executable>sh</executable>
+                                    <async>false</async>
+                                    <arguments>
+                                        <argument>-c</argument>
+                                        <argument>ps -fea | pgrep -f 'appium' | awk '{print $1}' | xargs kill -9</argument>
+                                    </arguments>
+                                </configuration>
+                             </execution>
+                        </executions>
+
+                   </plugin>
+               </plugins>
+           </build>
+        </profile>
+
+
+
+        <!--  -->
+        <!-- Start Appium server profile -->
+        <!--  -->
+        <profile>
+            <id>appium-server</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.5.0</version>
+                        <executions>
+
+                             <!-- start previous instances -->
+                             <execution>
+                                 <id>appium-startup</id>
+                                 <phase>test-compile</phase>
+                                 <goals>
+                                     <goal>exec</goal>
+                                 </goals>
+                                <configuration>
+                                    <executable>appium</executable>
+                                    <workingDirectory>${buildDirectory}</workingDirectory>
+                                    <async>true</async>
+                                    <arguments>
+                                        <argument>-p</argument>
+                                        <argument>${selenium.hybridPort}</argument>
+                                        <argument>-bp</argument>
+                                        <argument>${selenium.hybridBootstrapPort}</argument>
+                                        <argument>--chromedriver-port</argument>
+                                        <argument>${selenium.hybridChromedriverPort}</argument>
+                                        <argument>--log-level</argument>
+                                        <argument>debug</argument>
+                                    </arguments>
+                               </configuration>
+                             </execution>
+                        </executions>
+
+                   </plugin>
+               </plugins>
+           </build>
+        </profile>
+
+
+    </profiles>
+
+</project>
